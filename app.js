@@ -11,6 +11,7 @@ app.use('/api/products', require('./routes/products.routes'));
 app.use('/api/categories', require('./routes/categories.routes'));
 app.use('/api/movements', require('./routes/movements.routes'));
 app.use('/api/stock', require('./routes/stock.routes'));
+app.use('/api', require('./routes/auth.routes'));
 
 // 🔄 Sincronización y servidor
 db.sequelize.sync({ alter: true })
