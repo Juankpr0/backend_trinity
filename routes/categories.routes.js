@@ -16,13 +16,13 @@ router.get('/', async (req, res) => {
 // Crear una nueva categoría
 router.post('/', async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, imageUrl } = req.body;
 
     if (!name) {
       return res.status(400).json({ mensaje: 'El nombre es obligatorio' });
     }
 
-    const nuevaCategoria = await db.Category.create({ name, description });
+    const nuevaCategoria = await db.Category.create({ name, description, imageUrl });
     res.status(201).json(nuevaCategoria);
   } catch (error) {
     console.error(error);
@@ -30,10 +30,10 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Actualizar una categoría por ID
+// Actualizar una categoría
 router.put('/:id', async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, description, imageUrl } = req.body;
     const id = req.params.id;
 
     if (!name) {
@@ -47,6 +47,7 @@ router.put('/:id', async (req, res) => {
 
     categoria.name = name;
     if (description !== undefined) categoria.description = description;
+    if (imageUrl !== undefined) categoria.imageUrl = imageUrl;
 
     await categoria.save();
 
@@ -57,7 +58,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// Eliminar una categoría por ID
+// Eliminar una categoría
 router.delete('/:id', async (req, res) => {
   try {
     const id = req.params.id;
@@ -67,7 +68,6 @@ router.delete('/:id', async (req, res) => {
       return res.status(404).json({ mensaje: 'Categoría no encontrada' });
     }
 
-    // (Opcional) Validar si la categoría tiene productos antes de eliminar
     const productosAsociados = await db.Product.count({ where: { category_id: id } });
     if (productosAsociados > 0) {
       return res.status(400).json({ mensaje: 'No se puede eliminar la categoría porque tiene productos asociados' });
@@ -81,6 +81,5 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ mensaje: 'Error al eliminar la categoría' });
   }
 });
-
 
 module.exports = router;

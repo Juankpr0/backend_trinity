@@ -8,7 +8,6 @@ app.use(express.json());
 
 // Rutas
 app.use('/api/products', require('./routes/products.routes'));
-app.use('/api/stock/productos', require('./routes/products.routes'));
 app.use('/api/categories', require('./routes/categories.routes'));
 app.use('/api/movements', require('./routes/movements.routes'));
 app.use('/api/stock', require('./routes/stock.routes'));

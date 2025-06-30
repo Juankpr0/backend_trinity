@@ -7,6 +7,10 @@ module.exports = (sequelize, DataTypes) => {
     description: {
       type: DataTypes.STRING,
       allowNull: true
+    },
+    imageUrl: {
+      type: DataTypes.STRING,
+      allowNull: true  
     }
   }, {
     timestamps: true
