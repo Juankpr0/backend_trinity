@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     nombre: {
       type: DataTypes.STRING,
       allowNull: false
+    },
+    rol: {
+      type: DataTypes.STRING,
+      allowNull: false,
     }
   });
 
