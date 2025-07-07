@@ -5,11 +5,27 @@ const db = require('../models');
 // Obtener todos los productos con su categoría
 router.get('/', async (req, res) => {
   try {
-    const productos = await db.Product.findAll({ include: db.Category });
+    const productos = await db.Product.findAll({
+      include: {
+        model: db.Category,
+        attributes: ['id', 'name']
+      }
+    });
     res.json(productos);
   } catch (error) {
     console.error('❌ Error al obtener productos:', error);
     res.status(500).json({ mensaje: 'Error al obtener productos' });
+  }
+});
+
+// Obtener el total de productos
+router.get('/count', async (req, res) => {
+  try {
+    const total = await db.Product.count();
+    res.json(total);
+  } catch (error) {
+    console.error('❌ Error al contar productos:', error);
+    res.status(500).json({ mensaje: 'Error al obtener el total de productos' });
   }
 });
 
@@ -40,18 +56,15 @@ router.post('/', async (req, res) => {
 router.put('/:id', async (req, res) => {
   try {
     const { name, quantity, category_id, imageUrl } = req.body;
-    const producto = await db.Product.findByPk(req.params.id);
+    const { id } = req.params;
 
+    const producto = await db.Product.findByPk(id);
     if (!producto) {
       return res.status(404).json({ mensaje: 'Producto no encontrado' });
     }
 
-    producto.name = name;
-    producto.quantity = quantity;
-    producto.category_id = category_id;
-    producto.imageUrl = imageUrl;
+    await producto.update({ name, quantity, category_id, imageUrl });
 
-    await producto.save();
     res.json({ mensaje: 'Producto actualizado', producto });
   } catch (error) {
     console.error('❌ Error al actualizar producto:', error);
@@ -62,14 +75,15 @@ router.put('/:id', async (req, res) => {
 // Eliminar un producto por ID
 router.delete('/:id', async (req, res) => {
   try {
-    const producto = await db.Product.findByPk(req.params.id);
+    const { id } = req.params;
+    const producto = await db.Product.findByPk(id);
 
     if (!producto) {
       return res.status(404).json({ mensaje: 'Producto no encontrado' });
     }
 
     await producto.destroy();
-    res.json({ mensaje: 'Producto eliminado' });
+    res.json({ mensaje: 'Producto eliminado correctamente' });
   } catch (error) {
     console.error('❌ Error al eliminar producto:', error);
     res.status(500).json({ mensaje: 'Error al eliminar el producto' });
@@ -79,8 +93,10 @@ router.delete('/:id', async (req, res) => {
 // Obtener productos por ID de categoría
 router.get('/categoria/:id', async (req, res) => {
   try {
+    const { id } = req.params;
+
     const productos = await db.Product.findAll({
-      where: { category_id: req.params.id },
+      where: { category_id: id },
       include: {
         model: db.Category,
         attributes: ['name']

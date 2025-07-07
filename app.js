@@ -1,17 +1,24 @@
 const express = require('express');
 const cors = require('cors');
-const app = express();
+const path = require('path');
 const db = require('./models');
+
+const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// Rutas
+// 🖼️ Servir imágenes
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 🔀 Rutas
 app.use('/api/products', require('./routes/products.routes'));
-app.use('/api/categories', require('./routes/categories.routes'));
+app.use('/api/categories', require('./routes/categoriy.routes'));
 app.use('/api/movements', require('./routes/movements.routes'));
 app.use('/api/stock', require('./routes/stock.routes'));
 app.use('/api', require('./routes/auth.routes'));
+app.use('/api/salidas', require('./routes/salidas.routes'));
+app.use('/api/notifications', require('./routes/notification.routes'));
 
 // 🔄 Sincronización y servidor
 db.sequelize.sync({ alter: true })
